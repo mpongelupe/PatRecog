@@ -1,6 +1,3 @@
-library('plot3D')
-library('pracma')
-
 sample_bank <- data.matrix(iris)
 
 sorteia <- function (bank) (bank[randperm(nrow(bank)),])
@@ -42,29 +39,15 @@ loop <- function(count, sample_bank) {
       set <- pdfnvar(s, m_setosa, c_setosa, 4)
       ver <- pdfnvar(s, m_versicolor, c_versicolor, 4)
       vir <- pdfnvar(s, m_virginica, c_virginica, 4)
-      if(set > ver && set > vir){
-        saida[i] <- 1
-      }
-      else if(set < ver && ver > vir){
-        saida[i] <- 2
-      }
-      else {
-        saida[i] <- 3
-      }
+      saida[i] <- which.max(c(set, ver, vir))
     }
       error <- (y_teste - saida)
-      e_l <- length(error)
-      cont <- 0
-     for(element in 1:e_l) {
-        if(error[element] != 0){
-          cont <- cont+1
-        }   
-     }
-      global_error[co] <- (cont/45)*100
+      e_l <- length(which(error != 0))
+      global_error[co] <- (e_l/l)*100
   }
   a <- mean(global_error)
   print(paste('The mean error for', count, 'executions is', format(round(a, 2), nsmall = 2), '%'))
-  return(a)
+  return(global_error)
 }
-loop(100, sample_bank)
+error <- loop(100, sample_bank)
 
